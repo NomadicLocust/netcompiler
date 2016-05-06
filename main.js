@@ -16,18 +16,18 @@ var upload = multer({ storage: storage });
 const spawn = require('child_process').spawn;
 
 app.get('/', function(req, res) {
-  res.send('hello world');
+  res.send('Netcompiler');
 });
 
 app.post('/compile', upload.single('source'), function(req, res) {
   var path = req.file.path;
 
-  var gcc = spawn('gcc', [path, '-o', 'main']);
+  var gcc = spawn('gcc', [path, '-o', 'bin/main']);
   var gccError;
   
   gcc.stderr.on('data', function(data) {
     gccError = data;
-    console.log(data);
+    //console.log(data);
   });
 
   gcc.on('close', function(code) {
@@ -35,10 +35,13 @@ app.post('/compile', upload.single('source'), function(req, res) {
       res.send(gccError); 
       return;
     }
-    var run = spawn('./main');
+    var run = spawn('bin/main');
 
     run.stdout.on('data', function(data) {
       res.send(data);
+      /*
+       * res.sendfile('bin/main');
+       */
     });
   });
 });
