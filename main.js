@@ -22,7 +22,8 @@ app.get('/', function(req, res) {
 app.post('/compile', upload.single('source'), function(req, res) {
   var path = req.file.path;
 
-  var gcc = spawn('gcc', [path, '-o', 'bin/main']);
+  var gcc = spawn('i586-mingw32msvc-gcc', [path, '-o', 'bin/main.exe']);
+  //var gpp = spawn('i586-mingw32msvc-g++', [path, '-o', 'bin/main.exe']);
   var gccError;
   
   gcc.stderr.on('data', function(data) {
@@ -35,14 +36,7 @@ app.post('/compile', upload.single('source'), function(req, res) {
       res.send(gccError); 
       return;
     }
-    var run = spawn('bin/main');
-
-    run.stdout.on('data', function(data) {
-      res.send(data);
-      /*
-       * res.sendfile('bin/main');
-       */
-    });
+    res.sendFile('bin/main.exe', { root: __dirname });
   });
 });
 
